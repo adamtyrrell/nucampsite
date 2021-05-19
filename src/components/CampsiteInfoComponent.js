@@ -42,13 +42,14 @@ class CampsiteInfoComponent extends Component {
 
         if (this.props.campsite){
             return(
-                <div className="row">
-                    {this.renderCampsite(this.props.campsite)}
-                   
-                        {this.renderComments(this.props.campsite.comments)}
+                <div className = "container">
+                    <div className="row">
+                        {this.renderCampsite(this.props.campsite)}
                     
-                </div>
-                               
+                            {this.renderComments(this.props.campsite.comments)}
+                        
+                    </div>
+                </div>               
             );
         } else{
                 return(
