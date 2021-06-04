@@ -1,8 +1,11 @@
 import React, { Component }  from 'react';
-import { Card, CardImg, CardBody, CardText, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
-import { Control, LocalForm, Label} from 'react-redux-form';
+import { Card, CardImg, CardBody, CardText, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Label } from 'reactstrap';
+import { Control, LocalForm, Errors} from 'react-redux-form';
 import { Link } from 'react-router-dom';
 
+const required = val => val && val.length;
+const maxLength = len => val => !val || (val.length <= len);
+const minLength = len => val => val && (val.length >= len);
 
     function RenderCampsite({campsite}) {
         return(
@@ -38,6 +41,7 @@ import { Link } from 'react-router-dom';
         }
     }
 
+
     function CampsiteInfo(props) {
 
         if (props.campsite){
@@ -70,6 +74,7 @@ import { Link } from 'react-router-dom';
             }
 
         }
+        
         class CommentForm extends Component {
             constructor(props) {
                 super(props);
@@ -77,6 +82,10 @@ import { Link } from 'react-router-dom';
                     rating:'',
                     author: '',
                     text: '',
+                    touched: {
+                        autor: false,
+                        text: false,
+                    },
                 isModalOpen: false
                 };
                 this.toggleModal = this.toggleModal.bind(this);
@@ -90,6 +99,7 @@ import { Link } from 'react-router-dom';
             handleSubmit(values) {
                 console.log("Current state is: " + JSON.stringify(values));
                 alert("Current state is: " + JSON.stringify(values));
+                this.toggleModal();
             }
             render() {
                 return(
@@ -101,9 +111,9 @@ import { Link } from 'react-router-dom';
                             <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
                             <ModalBody>
                                 <LocalForm onSubmit={values => this.handleSubmit(values)}>
-                                    <div className="form-group">                             
+                                    <div className="form-group">                                                                
                                         <Label htmlFor="rating">Rating</Label>                                      
-                                        <Control.select model=".rating" id="rating" name="rating">
+                                        <Control.select model=".rating" id="rating" name="rating" className="form-control">
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                             <option value="3">3</option>
@@ -113,11 +123,27 @@ import { Link } from 'react-router-dom';
                                     </div> 
                                     <div className="form-group">                             
                                         <Label htmlFor="author">Author</Label>                                      
-                                        <Control.text model=".author" id="author" name="author"/> 
+                                        <Control.text model=".author" id="author" name="author" className="form-control"
+                                        validators={{
+                                        required, 
+                                        minLength: minLength(2),
+                                        maxLength: maxLength(15)
+                                        }}/> 
+                                        <Errors
+                                            className="text-danger"
+                                            model=".author"
+                                            show="touched"
+                                            component="div"
+                                            messages={{
+                                                required: 'Required',
+                                                minLength: 'Must be at least 2 characters',
+                                                maxLength: 'Must be 15 characters or less'
+                                            }}
+                                        />
                                     </div>
                                     <div className="form-group">                             
                                         <Label htmlFor="text">Text</Label>                                      
-                                        <Control.textarea model=".text" id="text" name="text"/> 
+                                        <Control.textarea model=".text" id="text" name="text" className="form-control" rows={6}/> 
                                     </div>                               
                                     <Button type="submit" color="primary">Submit</Button>   
                                 </LocalForm>
