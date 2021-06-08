@@ -1,17 +1,11 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
 
 
 function About(props) {
-
-    const partners = props.partners.map(partner => {
-        return (
-            <Media tag="li" key={partner.id}>
-                <RenderPartner partner={partner}/>
-            </Media>
-        );
-    });
 
     return (
         <div className="container">
@@ -65,11 +59,7 @@ function About(props) {
                 <div className="col-12">
                     <h3>Community Partners</h3>
                 </div>
-                <div className="col mt-4">
-                    <Media list>
-                        {partners}
-                    </Media>
-                </div>
+                <PartnerList partners={props.partners}/>
             </div>
         </div>
     );
@@ -79,7 +69,7 @@ function RenderPartner({partner}) {
     if(partner){
         return(
             <React.Fragment>
-                <Media object="true" src={partner.image} alt={partner.name} width="150" />
+                <Media object="true" src={baseUrl + partner.image} alt={partner.name} width="150" />
                 <Media body="true" className="ml-5 mb-4">
                     <Media heading="true">{partner.name}</Media>
                     {partner.description}
@@ -93,5 +83,27 @@ function RenderPartner({partner}) {
         );
     }
 
+}
+
+function PartnerList({isLoading, errMess, props}) {
+    const partners = props.partners.map(partner => {
+        return (
+            <Media tag="li" key={partner.id}>
+                <RenderPartner partner={partner}/>
+            </Media>
+        );
+    });
+
+    if (isLoading) {
+        return <Loading />;
+    }
+    if (errMess) {
+        return <div className="col"><h4>{errMess}</h4></div>;
+    }
+    return(
+        <div className="col mt-4">
+            <Media list>{partners}</Media>
+        </div>
+    );
 }
 export default About;
